@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero container">
+  <div class="row align-items-center g-5 position-relative">
+    <div class="col-lg-7">
+      <div class="eyebrow"><span></span> AI prompt creation, simplified</div>
+      <h1>Comprehensive AI<br><em>Image Generator</em></h1>
+      <p class="hero-copy">Shape a simple idea into a vivid, production-ready image prompt. Start with your imagination—we’ll help with the details.</p>
+      <div class="d-flex flex-wrap gap-3 align-items-center">
+        <a class="btn btn-primary-custom" href="{{ url_for('prompt') }}">Create your first prompt <span aria-hidden="true">→</span></a>
+        <span class="small-note">Free to explore · No sign-up needed</span>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="preview-card">
+        <div class="preview-topbar"><div class="window-dots"><i></i><i></i><i></i></div><span>Prompt preview</span></div>
+        <div class="preview-art" role="img" aria-label="Abstract purple landscape illustration">
+          <div class="moon"></div><div class="mountain mountain-back"></div><div class="mountain mountain-front"></div>
+          <div class="spark spark-one">✦</div><div class="spark spark-two">✦</div>
+        </div>
+        <div class="preview-text"><span class="tag">CINEMATIC</span><span class="tag">DREAMLIKE</span><p>“A luminous violet horizon, sculpted clouds, soft atmospheric light…”</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="feature-strip row g-4">
+    <div class="col-md-4"><div class="feature"><span>01</span><div><strong>Start simple</strong><p>Describe the image in your own words.</p></div></div></div>
+    <div class="col-md-4"><div class="feature"><span>02</span><div><strong>Shape the details</strong><p>Add style, mood, lighting, and more.</p></div></div></div>
+    <div class="col-md-4"><div class="feature"><span>03</span><div><strong>Create freely</strong><p>Use your prompt with any image model.</p></div></div></div>
+  </div>
+</section>
+{% endblock %}
