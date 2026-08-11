@@ -1,0 +1,78 @@
+/* Coral, cerulean, and teal color theme */
+:root {
+    --ink: #f3fbfb;
+    --muted: #9bbabd;
+    --surface: rgba(7, 42, 49, 0.78);
+    --border: rgba(111, 207, 207, 0.18);
+    --purple: #168aad;
+    --pink: #ff7f6e;
+    --teal: #1aa6a6;
+    --background: #061f25;
+}
+
+body {
+    background:
+        radial-gradient(circle at 80% 25%, rgba(22, 138, 173, 0.24), transparent 28rem),
+        radial-gradient(circle at 5% 75%, rgba(255, 127, 110, 0.15), transparent 25rem),
+        var(--background);
+}
+
+.brand-mark {
+    background: linear-gradient(135deg, var(--teal), var(--pink));
+}
+
+.eyebrow {
+    color: #85d8d5;
+}
+
+h1 em {
+    background: linear-gradient(100deg, #25b8c7, #ff8b76);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(110deg, #168aad, #1aa6a6 55%, #ef7668);
+    box-shadow: 0 12px 35px rgba(17, 137, 153, 0.3);
+}
+
+.btn-primary-custom:hover {
+    box-shadow: 0 16px 40px rgba(255, 127, 110, 0.3);
+}
+
+.preview-art {
+    background: linear-gradient(165deg, #075d72, #1aa6a6 55%, #ff9a80);
+}
+
+.moon {
+    background: #ffd7cb;
+    box-shadow: 0 0 45px #ff9b83;
+}
+
+.mountain-back {
+    background: #157f88;
+}
+
+.mountain-front {
+    background: linear-gradient(135deg, #073d49, #0d7180);
+}
+
+.tag {
+    color: #8ce4df;
+    background: rgba(26, 166, 166, 0.14);
+    border-color: rgba(98, 205, 205, 0.25);
+}
+
+.prompt-panel textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 0.2rem rgba(26, 166, 166, 0.14);
+}
+
+.submission-note {
+    border-color: rgba(65, 205, 196, 0.25);
+    background: rgba(22, 138, 145, 0.14);
+}
+
+.submission-note > span {
+    color: #66d7cd;
+}
