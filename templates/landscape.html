@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Landscape Generator · Comprehensive AI Image Generator{% endblock %}
+{% block content %}
+<section class="landscape-workspace container-fluid">
+  <div class="landscape-shell">
+    <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
+    <div class="landscape-heading">
+      <div class="eyebrow"><span></span> Landscape generator</div>
+      <h1>Build a vivid <em>landscape.</em></h1>
+      <p>Edit your scene, then shape its atmosphere with the controls below.</p>
+    </div>
+
+    <form class="prompt-panel landscape-panel" method="post">
+      <label for="landscapeDescription">Landscape description</label>
+      <textarea class="form-control" id="landscapeDescription" name="description" rows="12" maxlength="4000" required placeholder="For example: A wide alpine valley with a winding river, distant snow-covered peaks, and wildflowers in the foreground...">{{ description }}</textarea>
+
+      <div class="landscape-controls">
+        <div>
+          <label for="timeOfDay">Time of day</label>
+          <select class="form-select" id="timeOfDay" name="time_of_day">
+            {% for value, label in [('sunrise', 'Sunrise'), ('morning', 'Morning'), ('midday', 'Midday'), ('afternoon', 'Afternoon'), ('evening', 'Evening'), ('sunset', 'Sunset'), ('night', 'Night')] %}
+              <option value="{{ value }}"{% if time_of_day == value %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="weather">Weather</label>
+          <select class="form-select" id="weather" name="weather">
+            {% for value, label in [('clear', 'Clear'), ('cloudy', 'Cloudy'), ('misty', 'Misty'), ('rainy', 'Rainy'), ('stormy', 'Stormy'), ('snowy', 'Snowy')] %}
+              <option value="{{ value }}"{% if weather == value %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="season">Season</label>
+          <select class="form-select" id="season" name="season">
+            {% for value, label in [('spring', 'Spring'), ('summer', 'Summer'), ('autumn', 'Autumn'), ('winter', 'Winter')] %}
+              <option value="{{ value }}"{% if season == value %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary-custom justify-content-center landscape-submit" type="submit">Update landscape <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="landscape-footer-actions">
+      <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

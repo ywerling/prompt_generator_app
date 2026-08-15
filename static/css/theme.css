@@ -36,6 +36,102 @@ body {
     border-color: var(--teal);
 }
 
+.btn-landscape {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1.15rem;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    font-weight: 700;
+}
+
+.btn-landscape:hover,
+.btn-landscape:focus {
+    color: #fff;
+    border-color: var(--teal);
+    background: rgba(22, 138, 173, 0.16);
+}
+
+.landscape-workspace {
+    padding: 3rem clamp(1.25rem, 4vw, 5rem) 7rem;
+}
+
+.landscape-shell {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.landscape-heading {
+    margin: 4rem 0 2.5rem;
+}
+
+.landscape-heading h1 {
+    font-size: clamp(3rem, 6vw, 5.8rem);
+}
+
+.landscape-heading p {
+    max-width: 48rem;
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.landscape-panel {
+    padding: clamp(1.5rem, 3vw, 3rem);
+}
+
+.landscape-panel textarea {
+    min-height: 22rem;
+}
+
+.landscape-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.landscape-controls select {
+    color: var(--ink);
+    background-color: rgba(7, 5, 14, 0.65);
+    border: 1px solid var(--border);
+    padding: 0.9rem 2.5rem 0.9rem 1rem;
+}
+
+.landscape-controls select:focus {
+    color: #fff;
+    background-color: rgba(7, 5, 14, 0.8);
+    border-color: var(--teal);
+    box-shadow: 0 0 0 0.2rem rgba(26, 166, 166, 0.14);
+}
+
+.landscape-controls option {
+    color: var(--ink);
+    background: #073039;
+}
+
+.landscape-submit {
+    width: 100%;
+}
+
+.landscape-footer-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 767px) {
+    .landscape-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .landscape-heading {
+        margin-top: 3rem;
+    }
+}
+
 .brand-mark {
     background: linear-gradient(135deg, var(--teal), var(--pink));
 }
