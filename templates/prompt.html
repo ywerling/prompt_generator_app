@@ -2,7 +2,7 @@
 {% block title %}Prompt Workspace · Comprehensive AI Image Generator{% endblock %}
 {% block content %}
 <section class="workspace container">
-  <a class="back-link" href="{{ url_for('home') }}">← Back to home</a>
+  <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
   <div class="row justify-content-center"><div class="col-xl-9">
     <div class="workspace-heading text-center">
       <div class="eyebrow justify-content-center"><span></span> Prompt workspace</div>
@@ -10,12 +10,18 @@
       <p>Write a rough idea or a detailed scene. You can refine it later.</p>
     </div>
     <form class="prompt-panel" method="post">
+      <label for="titleInput">Title</label>
+      <input class="form-control" id="titleInput" name="title" type="text" maxlength="120" required placeholder="For example: Snowy forest cabin" value="{{ title }}">
       <label for="promptInput">Your image idea</label>
       <textarea class="form-control" id="promptInput" name="prompt" rows="8" maxlength="2000" required placeholder="For example: A quiet glass cabin in a snowy forest at blue hour, warm lights glowing inside...">{{ prompt_text }}</textarea>
       <div class="prompt-meta"><span id="charCount">0 / 2000</span><span>Tip: include a subject, setting, and mood.</span></div>
+      <div class="save-option">
+        <input class="form-check-input" id="savePrompt" name="save_prompt" type="checkbox" value="yes">
+        <label for="savePrompt"><strong>Save this prompt</strong><span>Store it in the local prompt database.</span></label>
+      </div>
       <button class="btn btn-primary-custom w-100 justify-content-center" type="submit">Continue with this prompt <span aria-hidden="true">→</span></button>
     </form>
-    {% if submitted %}<div class="submission-note" role="status"><span>✓</span><div><strong>Your idea is ready.</strong><p>Prompt enhancement options will be added here in the next step.</p></div></div>{% endif %}
+    {% if submitted %}<div class="submission-note" role="status"><span>✓</span><div><strong>{% if saved %}Prompt saved.{% else %}Your idea is ready.{% endif %}</strong><p>{% if saved %}It is now stored in the local database.{% else %}Prompt enhancement options will be added here in the next step.{% endif %}</p></div></div>{% endif %}
   </div></div>
 </section>
 {% endblock %}
