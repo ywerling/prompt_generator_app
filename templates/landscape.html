@@ -15,33 +15,30 @@
       <textarea class="form-control" id="landscapeDescription" name="description" rows="12" maxlength="4000" required placeholder="For example: A wide alpine valley with a winding river, distant snow-covered peaks, and wildflowers in the foreground...">{{ description }}</textarea>
 
       <div class="landscape-controls">
-        <div>
-          <label for="timeOfDay">Time of day</label>
-          <select class="form-select" id="timeOfDay" name="time_of_day">
-            {% for value, label in [('sunrise', 'Sunrise'), ('morning', 'Morning'), ('midday', 'Midday'), ('afternoon', 'Afternoon'), ('evening', 'Evening'), ('sunset', 'Sunset'), ('night', 'Night')] %}
-              <option value="{{ value }}"{% if time_of_day == value %} selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div>
-          <label for="weather">Weather</label>
-          <select class="form-select" id="weather" name="weather">
-            {% for value, label in [('clear', 'Clear'), ('cloudy', 'Cloudy'), ('misty', 'Misty'), ('rainy', 'Rainy'), ('stormy', 'Stormy'), ('snowy', 'Snowy')] %}
-              <option value="{{ value }}"{% if weather == value %} selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div>
-          <label for="season">Season</label>
-          <select class="form-select" id="season" name="season">
-            {% for value, label in [('spring', 'Spring'), ('summer', 'Summer'), ('autumn', 'Autumn'), ('winter', 'Winter')] %}
-              <option value="{{ value }}"{% if season == value %} selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
+        {% for dropdown in dropdowns %}
+          <div>
+            <label for="{{ dropdown.name }}">{{ dropdown.label }}</label>
+            <select class="form-select" id="{{ dropdown.name }}" name="{{ dropdown.name }}">
+              {% for option in dropdown.options %}
+                <option value="{{ option }}"{% if selections[dropdown.name] == option %} selected{% endif %}>{{ option|replace('_', ' ')|title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endfor %}
+      </div>
+
+      <button class="btn btn-generate landscape-submit" type="submit" name="action" value="generate">Generate <span aria-hidden="true">✦</span></button>
+
+      <div class="generated-result">
+        <label for="generatedPrompt">Generated result</label>
+        <textarea class="form-control" id="generatedPrompt" name="generated_prompt" rows="7" maxlength="5000" placeholder="Your generated landscape prompt will appear here...">{{ generated_prompt }}</textarea>
+        <div class="result-actions">
+          <span id="copyStatus" class="copy-status" role="status" aria-live="polite"></span>
+          <button class="btn btn-copy-prompt" id="copyPrompt" type="button">Copy to clipboard <span aria-hidden="true">⧉</span></button>
         </div>
       </div>
 
-      <button class="btn btn-primary-custom justify-content-center landscape-submit" type="submit">Update landscape <span aria-hidden="true">→</span></button>
+      <button class="btn btn-primary-custom justify-content-center landscape-submit" type="submit" name="action" value="update">Update landscape <span aria-hidden="true">→</span></button>
     </form>
     <div class="landscape-footer-actions">
       <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>

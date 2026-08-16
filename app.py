@@ -7,6 +7,28 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 
+LANDSCAPE_DROPDOWNS = [
+    {
+        "name": "time_of_day",
+        "label": "Time of day",
+        "options": ["sunrise", "morning", "midday", "afternoon", "evening", "sunset", "night"],
+        "default": "sunrise",
+    },
+    {
+        "name": "weather",
+        "label": "Weather",
+        "options": ["clear", "cloudy", "misty", "rainy", "stormy", "snowy"],
+        "default": "clear",
+    },
+    {
+        "name": "season",
+        "label": "Season",
+        "options": ["spring", "summer", "autumn", "winter"],
+        "default": "spring",
+    },
+]
+
+
 def get_db_connection():
     database_path = Path(app.instance_path) / "prompts.db"
     database_path.parent.mkdir(parents=True, exist_ok=True)
@@ -62,22 +84,34 @@ def prompt():
 @app.route("/landscape", methods=["GET", "POST"])
 def landscape():
     description = ""
-    time_of_day = "sunrise"
-    weather = "clear"
-    season = "spring"
+    generated_prompt = ""
+    selections = {
+        dropdown["name"]: dropdown["default"]
+        for dropdown in LANDSCAPE_DROPDOWNS
+    }
 
     if request.method == "POST":
         description = request.form.get("description", "").strip()
-        time_of_day = request.form.get("time_of_day", "sunrise")
-        weather = request.form.get("weather", "clear")
-        season = request.form.get("season", "spring")
+        for dropdown in LANDSCAPE_DROPDOWNS:
+            selected = request.form.get(dropdown["name"], dropdown["default"])
+            if selected in dropdown["options"]:
+                selections[dropdown["name"]] = selected
+        generated_prompt = request.form.get("generated_prompt", "").strip()
+
+        if request.form.get("action") == "generate" and description:
+            generated_prompt = (
+                f"{description} Set during {selections['time_of_day']}, with "
+                f"{selections['weather']} weather in {selections['season']}. "
+                "Expansive landscape composition, rich natural detail, "
+                "atmospheric depth, and cinematic lighting."
+            )
 
     return render_template(
         "landscape.html",
         description=description,
-        time_of_day=time_of_day,
-        weather=weather,
-        season=season,
+        dropdowns=LANDSCAPE_DROPDOWNS,
+        selections=selections,
+        generated_prompt=generated_prompt,
     )
 
 

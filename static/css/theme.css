@@ -116,6 +116,67 @@ body {
     width: 100%;
 }
 
+.btn-generate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.95rem 1.25rem;
+    color: #fff;
+    background: linear-gradient(110deg, #ef7668, #d55f7d);
+    border: 0;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 12px 30px rgba(239, 118, 104, 0.2);
+}
+
+.btn-generate:hover,
+.btn-generate:focus {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(239, 118, 104, 0.3);
+}
+
+.generated-result {
+    margin: 1.5rem 0;
+}
+
+.generated-result textarea {
+    min-height: 12rem;
+}
+
+.result-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.copy-status {
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.btn-copy-prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.9rem;
+    color: var(--ink);
+    background: rgba(22, 138, 173, 0.13);
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    font-weight: 600;
+}
+
+.btn-copy-prompt:hover,
+.btn-copy-prompt:focus {
+    color: #fff;
+    border-color: var(--teal);
+    background: rgba(22, 138, 173, 0.24);
+}
+
 .landscape-footer-actions {
     display: flex;
     justify-content: center;
