@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "components/ui.html" import back_link, copy_action, page_header %}
+{% block title %}Template Prompt Generator · Comprehensive AI Image Generator{% endblock %}
+{% block content %}
+<section class="workspace container">
+  {{ back_link() }}
+  <div class="row justify-content-center"><div class="col-xl-10">
+    {{ page_header("Template prompt generator", "Fill in a prompt <em>template.</em>", "Each placeholder in braces becomes a field you can complete.") }}
+
+    <form class="prompt-panel template-panel" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="templateInput">Prompt template</label>
+      <input class="form-control" id="templateInput" name="template" type="text" maxlength="1000" required value="{{ template }}" aria-describedby="templateHelp">
+      <div class="prompt-meta" id="templateHelp"><span>Use placeholders such as {PERSON} and {ARTIST}.</span><span>Submit Generate to apply template changes.</span></div>
+
+      {% if placeholders %}
+        <div class="template-sentence" aria-label="Template fields">
+          {% for kind, content in segments %}
+            {% if kind == "text" %}
+              <span class="template-text">{{ content }}</span>
+            {% else %}
+              <label class="visually-hidden" for="templateValue{{ loop.index }}">{{ content|replace('_', ' ')|title }}</label>
+              <input class="form-control template-value" id="templateValue{{ loop.index }}" name="value_{{ content }}" type="text" maxlength="300" required value="{{ values[content] }}" placeholder="{{ content|replace('_', ' ')|title }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if error %}<div class="template-message template-error" role="alert">{{ error }}</div>{% endif %}
+      {% if saved %}<div class="template-message template-success" role="status">✓ Prompt saved to the database.</div>{% endif %}
+
+      <button class="btn btn-generate w-100" type="submit" name="action" value="generate">Generate prompt <span aria-hidden="true">✦</span></button>
+
+      <div class="generated-result">
+        <label for="templateResult">Generated prompt</label>
+        <textarea class="form-control" id="templateResult" name="generated_prompt" rows="5" maxlength="5000" readonly placeholder="Your completed prompt will appear here...">{{ generated_prompt }}</textarea>
+        {{ copy_action("templateResult") }}
+      </div>
+
+      <button class="btn btn-primary-custom w-100 justify-content-center" type="submit" name="action" value="save"{% if not generated_prompt %} disabled{% endif %}>Save prompt to database <span aria-hidden="true">→</span></button>
+    </form>
+  </div></div>
+</section>
+{% endblock %}
