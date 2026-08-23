@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Generic Prompt Generator for Generative Artificial Intelligence{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="heading">Welcome to the Adobe Stock Image Data Webscrapping Tool</h1>
+  <p class="description">Enter a topic of your choice and when clicking the submit button, the tool will provide you with the description
+  of the first 100 images in the Adobe Stock Image Database for use in prompt for image generative AI.</p>
+</div>
+
+
+    <a
+      class="btn btn-warning btn-lg"
+      href="{{ url_for('home') }}"
+      role="button"
+      >Back</a
+    >
+
+
+    <form method="POST" action="{{ url_for('adobe.scrape') }}">
+        <div class="mb-3 row">
+            <label for="topic">Topic:</label>
+            <input type="text" id="topic" name="topic" value="{{ topic }}"><br><br>
+        </div>
+        <br><br>
+
+        <button type="submit">Submit</button><br><br>
+
+        <div class="row">
+            <label for="images">List of image descriptions:</label>
+            {% if images %}
+                {% for image in images[3:-3] %}
+                    {% set text_to_write = image.get_attribute("alt") %}
+                    {% if text_to_write and text_to_write|length > 1 %}
+                        <p>{{ text_to_write }}</p>
+                    {% endif %}
+
+                {% endfor %}
+            {% else %}
+                <p>No descriptions available.</p>
+            {% endif %}
+        </div>
+
+        <br><br>
+
+
+    </form>
+
+
+{% endblock %}

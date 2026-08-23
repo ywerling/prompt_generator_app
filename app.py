@@ -1,8 +1,11 @@
 import sqlite3
-import person_parameters as person_param
 from forms import CharacterForm
 from utils import process_character_form_data
 from pathlib import Path
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
 
 from flask import Flask, render_template, request
 
@@ -11,8 +14,11 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '52jMEfBA3347dbefePSSiheXox3E7e'
 
+# Define constants for Webscrapping feature
+ADOBE_STOCK_IMAGES_URL = "https://stock.adobe.com/"
+WEBSCRAPPER_SLEEP_INTERVAL = 1
 
-
+# Define constants for Landscape generator
 LANDSCAPE_DROPDOWNS = [
     {
         "name": "time_of_day",
@@ -63,8 +69,44 @@ PLATFORM_SUFFIX = {
 }
 
 
+# Function to initialize the Selenium WebDriver
+def init_webdriver():
+    # Setting up the Selenium WebDriver
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Run headless Chrome for better performance
+    driver = webdriver.Chrome(options=options)
+    return driver
 
 
+# Function to scrape Adobe Stock Images using Selenium
+def scrape_adobe_images(query):
+    # print(f"Query: {query}")
+    driver = init_webdriver()
+    try:
+        driver.get(ADOBE_STOCK_IMAGES_URL)
+        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+
+        # Find search box and enter search query
+        search_box = driver.find_element(By.NAME, "keyword")
+        search_box.clear()
+        search_box.send_keys(query)
+        search_box.send_keys(Keys.RETURN)
+
+        # allow time for processing the return
+        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+
+        # get infomration about the images
+        images = driver.find_elements(By.XPATH, "//img[@alt]")
+        # for image in images:
+        #     print(f'{image.get_attribute("alt")}{image.get_attribute("name")}\n')
+
+        return images
+
+    finally:
+        # driver.quit()
+        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+
+# Function to establish a connection to the database
 def get_db_connection():
     database_path = Path(app.instance_path) / "prompts.db"
     database_path.parent.mkdir(parents=True, exist_ok=True)
@@ -200,7 +242,23 @@ def character():
     # Render the template without a result if the form is not submitted
     return render_template('character.html', form=form)
 
+@app.route("/scrape", methods=["GET", "POST"])
+def scrape():
+    search_term = ""
+    # print("scrape called")
+    if request.method == "POST":
+        # print("scrape post")
+        search_term = request.form.get("topic")
+        images = scrape_adobe_images(search_term)
+        # for image in images:
+        #     print(f'{image.get_attribute("alt")}{image.get_attribute("name")}\n')
+        return render_template('adobe.html',
+                               images=images,
+                               topic=search_term)
 
+    return render_template('adobe.html',
+                           images=None,
+                           topic=search_term)
 
 
 
