@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "components/ui.html" import back_link, copy_action, page_header %}
+{% block title %}Detailed Prompt Generator · Comprehensive AI Image Generator{% endblock %}
+{% block content %}
+<section class="workspace container">
+  {{ back_link() }}
+  {{ page_header("Detailed prompt generator", "Direct every visual <em>detail.</em>", "Combine a subject and setting with artistic, photographic, colour, composition, and rendering controls.") }}
+
+  <form class="prompt-panel" method="post" action="{{ url_for('generators.generic') }}">
+    {{ form.hidden_tag() }}
+    <div class="row g-4">
+      {% for field in form if field.name not in ('csrf_token', 'submit') %}
+        <div class="{% if field.name in ('subject', 'background') %}col-md-6{% else %}col-md-6 col-xl-4{% endif %}">
+          {{ field.label(class="form-label") }}
+          {% if field.type == 'SelectField' %}
+            {{ field(class="form-select", data_randomizable="true") }}
+          {% else %}
+            {{ field(class="form-control", placeholder="Describe the " ~ field.label.text|lower) }}
+          {% endif %}
+          {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="d-flex flex-wrap gap-3 mt-4">
+      <button class="btn btn-landscape" type="button" data-randomize-form>Randomize controls <span aria-hidden="true">↻</span></button>
+      {{ form.submit(class="btn btn-primary-custom flex-grow-1 justify-content-center", value="Generate detailed prompt") }}
+    </div>
+  </form>
+
+  {% if result %}
+    <section class="generated-result mt-4" aria-labelledby="genericResultHeading">
+      <h2 id="genericResultHeading">Generated detailed prompt</h2>
+      <textarea class="form-control" id="genericGeneratedPrompt" rows="7">{{ result }}</textarea>
+      {{ copy_action("genericGeneratedPrompt") }}
+    </section>
+  {% endif %}
+</section>
+{% endblock %}

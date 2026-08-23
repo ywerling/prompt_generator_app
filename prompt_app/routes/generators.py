@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 
-from forms import CharacterForm
+from forms import CharacterForm, GenericForm
 from utils import process_character_form_data
 from ..services.landscape_builder import (
     LANDSCAPE_DROPDOWNS,
@@ -9,8 +9,16 @@ from ..services.landscape_builder import (
     validated_selections,
 )
 from ..services.prompt_builder import build_prompt
+from ..services.generic_builder import build_generic_prompt
 
 generators_bp = Blueprint("generators", __name__)
+
+
+@generators_bp.route("/generic", methods=["GET", "POST"])
+def generic():
+    form = GenericForm()
+    result = build_generic_prompt(request.form) if form.validate_on_submit() else None
+    return render_template("generic.html", form=form, result=result)
 
 
 @generators_bp.route("/landscape", methods=["GET", "POST"])

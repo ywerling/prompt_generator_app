@@ -26,4 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  document.querySelectorAll("[data-randomize-form]").forEach((button) => {
+    button.addEventListener("click", () => {
+      button.closest("form").querySelectorAll("select[data-randomizable]").forEach((select) => {
+        const firstChoice = select.options.length > 1 ? 1 : 0;
+        select.selectedIndex = firstChoice + Math.floor(Math.random() * (select.options.length - firstChoice));
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    });
+  });
 });
