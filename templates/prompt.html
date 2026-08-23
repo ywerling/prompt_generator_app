@@ -1,15 +1,13 @@
 {% extends "base.html" %}
+{% from "components/ui.html" import back_link, page_header %}
 {% block title %}Prompt Workspace · Comprehensive AI Image Generator{% endblock %}
 {% block content %}
 <section class="workspace container">
-  <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
+  {{ back_link() }}
   <div class="row justify-content-center"><div class="col-xl-9">
-    <div class="workspace-heading text-center">
-      <div class="eyebrow justify-content-center"><span></span> Prompt workspace</div>
-      <h1>What do you want to <em>create?</em></h1>
-      <p>Write a rough idea or a detailed scene. You can refine it later.</p>
-    </div>
+    {{ page_header("Prompt workspace", "What do you want to <em>create?</em>", "Write a rough idea or a detailed scene. You can refine it later.") }}
     <form class="prompt-panel" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label for="titleInput">Title</label>
       <input class="form-control" id="titleInput" name="title" type="text" maxlength="120" required placeholder="For example: Snowy forest cabin" value="{{ title }}">
       <label for="promptInput">Your image idea</label>

@@ -1,44 +1,31 @@
-{% extends 'base.html' %}
-
-{% block title %}Generic Prompt Generator for Generative Artificial Intelligence{% endblock %}
-
+{% extends "base.html" %}
+{% from "components/ui.html" import back_link, page_header %}
+{% block title %}Adobe Stock Explorer · Comprehensive AI Image Generator{% endblock %}
 {% block content %}
-<div class="container">
-  <h1 class="heading">Welcome to the Adobe Stock Image Data Webscrapping Tool</h1>
-  <p class="description">Enter a topic of your choice and when clicking the submit button, the tool will provide you with the description
-  of the first 100 images in the Adobe Stock Image Database for use in prompt for image generative AI.</p>
-</div>
-
-
-  <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
-
-
-    <form method="POST" action="{{ url_for('adobe') }}">
-        <div class="mb-3 row">
-            <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" value="{{ topic }}"><br><br>
-        </div>
-        <br><br>
-
-        <button type="submit">Submit</button><br><br>
-
-        <div class="row">
-            <label for="images">List of image descriptions:</label>
-            {% if error %}
-                <p class="alert alert-warning" role="alert">{{ error }}</p>
-            {% elif images %}
-                {% for description in images %}
-                    <p>{{ description }}</p>
-                {% endfor %}
-            {% else %}
-                <p>No descriptions available.</p>
-            {% endif %}
-        </div>
-
-        <br><br>
-
-
+<section class="workspace container">
+  {{ back_link() }}
+  <div class="row justify-content-center"><div class="col-xl-9">
+    {{ page_header("Adobe Stock explorer", "Find visual <em>inspiration.</em>", "Search Adobe Stock and collect image descriptions for use in your own prompts.") }}
+    <form class="prompt-panel" method="post" action="{{ url_for('adobe.search') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="topic">Search topic</label>
+      <input class="form-control" type="search" id="topic" name="topic" value="{{ topic }}" required placeholder="For example: misty mountain village">
+      <button class="btn btn-primary-custom w-100 justify-content-center" type="submit">Search descriptions <span aria-hidden="true">→</span></button>
     </form>
-
-
+    <section class="generated-result mt-4" aria-labelledby="descriptionHeading">
+      <h2 id="descriptionHeading">Image descriptions</h2>
+      {% if error %}
+        <p class="alert alert-warning" role="alert">{{ error }}</p>
+      {% elif images %}
+        <ol class="description-list">
+          {% for description in images %}<li>{{ description }}</li>{% endfor %}
+        </ol>
+      {% elif images is not none %}
+        <p>No descriptions were found.</p>
+      {% else %}
+        <p class="text-muted">Your results will appear here.</p>
+      {% endif %}
+    </section>
+  </div></div>
+</section>
 {% endblock %}

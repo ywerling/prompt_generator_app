@@ -1,0 +1,20 @@
+{% macro back_link() -%}
+  <a class="btn btn-back-home" href="{{ url_for('main.home') }}"><span aria-hidden="true">←</span> Back to home</a>
+{%- endmacro %}
+
+{% macro page_header(eyebrow, title, description) -%}
+  <div class="workspace-heading text-center">
+    <div class="eyebrow justify-content-center"><span></span> {{ eyebrow }}</div>
+    <h1>{{ title|safe }}</h1>
+    <p>{{ description }}</p>
+  </div>
+{%- endmacro %}
+
+{% macro copy_action(target_id) -%}
+  <div class="result-actions">
+    <span class="copy-status" role="status" aria-live="polite"></span>
+    <button class="btn btn-copy-prompt" type="button" data-copy-target="{{ target_id }}">
+      Copy to clipboard <span aria-hidden="true">⧉</span>
+    </button>
+  </div>
+{%- endmacro %}

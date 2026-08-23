@@ -7,25 +7,23 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCounter();
   }
 
-  const copyButton = document.querySelector("#copyPrompt");
-  const generatedPrompt = document.querySelector("#generatedPrompt");
-  const copyStatus = document.querySelector("#copyStatus");
-
-  if (copyButton && generatedPrompt && copyStatus) {
+  document.querySelectorAll("[data-copy-target]").forEach((copyButton) => {
     copyButton.addEventListener("click", async () => {
-      if (!generatedPrompt.value.trim()) {
-        copyStatus.textContent = "Generate a prompt first.";
+      const target = document.getElementById(copyButton.dataset.copyTarget);
+      const status = copyButton.parentElement.querySelector(".copy-status");
+      const text = target?.value ?? target?.textContent ?? "";
+      if (!text.trim()) {
+        status.textContent = "Generate a prompt first.";
         return;
       }
-
       try {
-        await navigator.clipboard.writeText(generatedPrompt.value);
-        copyStatus.textContent = "Copied!";
+        await navigator.clipboard.writeText(text.trim());
+        status.textContent = "Copied!";
       } catch {
-        generatedPrompt.select();
+        if (typeof target.select === "function") target.select();
         const copied = document.execCommand("copy");
-        copyStatus.textContent = copied ? "Copied!" : "Copy failed. Select the text and copy it manually.";
+        status.textContent = copied ? "Copied!" : "Copy failed. Select the text and copy it manually.";
       }
     });
-  }
+  });
 });

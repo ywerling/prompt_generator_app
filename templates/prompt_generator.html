@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
+{% from "components/ui.html" import back_link, copy_action, page_header %}
 
 {% block title %}Prompt Generator — Python AI Image Generator{% endblock %}
 
 {% block content %}
-<div class="content">
-  <h2 class="heading">Prompt Generator</h2>
-  <p class="description">Describe your idea and we'll craft a detailed prompt for your chosen AI image tool.</p>
-    <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
-  <div class="tool-card w-100">
-    <form method="POST" action="{{ url_for('prompt_generator') }}">
+<section class="workspace container">
+  {{ back_link() }}
+  {{ page_header("Prompt generator", "Shape a detailed <em>prompt.</em>", "Describe your idea and tailor it for your chosen AI image tool.") }}
+  <div class="prompt-panel">
+    <form method="post" action="{{ url_for('generators.prompt_generator') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="row g-4">
 
         <div class="col-md-8">
@@ -31,14 +32,9 @@
           <label class="form-label fw-semibold">Art Style</label>
           <select class="form-select" name="style">
             <option value="">— None —</option>
-            <option value="photorealistic">Photorealistic</option>
-            <option value="digital_art">Digital Art</option>
-            <option value="oil_painting">Oil Painting</option>
-            <option value="watercolor">Watercolour</option>
-            <option value="anime">Anime / Manga</option>
-            <option value="concept_art">Concept Art</option>
-            <option value="pixel_art">Pixel Art</option>
-            <option value="3d_render">3D Render</option>
+            {% for value, label in [('photorealistic', 'Photorealistic'), ('digital_art', 'Digital Art'), ('oil_painting', 'Oil Painting'), ('watercolor', 'Watercolour'), ('anime', 'Anime / Manga'), ('concept_art', 'Concept Art'), ('pixel_art', 'Pixel Art'), ('3d_render', '3D Render')] %}
+              <option value="{{ value }}" {% if style == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
           </select>
         </div>
 
@@ -46,23 +42,18 @@
           <label class="form-label fw-semibold">Lighting</label>
           <select class="form-select" name="lighting">
             <option value="">— None —</option>
-            <option value="golden_hour">Golden Hour</option>
-            <option value="neon">Neon Glow</option>
-            <option value="studio">Studio Lighting</option>
-            <option value="dramatic">Dramatic / Chiaroscuro</option>
-            <option value="soft">Soft Diffused</option>
-            <option value="volumetric">Volumetric</option>
+            {% for value, label in [('golden_hour', 'Golden Hour'), ('neon', 'Neon Glow'), ('studio', 'Studio Lighting'), ('dramatic', 'Dramatic / Chiaroscuro'), ('soft', 'Soft Diffused'), ('volumetric', 'Volumetric')] %}
+              <option value="{{ value }}" {% if lighting == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
           </select>
         </div>
 
         <div class="col-md-4">
           <label class="form-label fw-semibold">Aspect Ratio</label>
           <select class="form-select" name="ratio">
-            <option value="1:1">1:1 — Square</option>
-            <option value="16:9">16:9 — Landscape</option>
-            <option value="9:16">9:16 — Portrait</option>
-            <option value="4:3">4:3 — Classic</option>
-            <option value="3:2">3:2 — Photo</option>
+            {% for value, label in [('1:1', 'Square'), ('16:9', 'Landscape'), ('9:16', 'Portrait'), ('4:3', 'Classic'), ('3:2', 'Photo')] %}
+              <option value="{{ value }}" {% if ratio == value %}selected{% endif %}>{{ value }} — {{ label }}</option>
+            {% endfor %}
           </select>
         </div>
 
@@ -80,11 +71,9 @@
     {% if result %}
     <hr class="my-4">
     <h5 class="fw-bold mb-2"><i class="fa fa-sparkles me-1"></i> Generated Prompt</h5>
-    <div class="result-box">{{ result }}</div>
-    <button class="button mt-3" onclick="navigator.clipboard.writeText(document.querySelector('.result-box').innerText)">
-      <i class="fa fa-copy me-1"></i> Copy
-    </button>
+    <div class="result-box" id="generatedPrompt">{{ result }}</div>
+    {{ copy_action("generatedPrompt") }}
     {% endif %}
   </div>
-</div>
+</section>
 {% endblock %}

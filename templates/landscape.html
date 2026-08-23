@@ -1,16 +1,14 @@
 {% extends "base.html" %}
+{% from "components/ui.html" import back_link, copy_action, page_header %}
 {% block title %}Landscape Generator · Comprehensive AI Image Generator{% endblock %}
 {% block content %}
 <section class="landscape-workspace container-fluid">
   <div class="landscape-shell">
-    <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
-    <div class="landscape-heading">
-      <div class="eyebrow"><span></span> Landscape generator</div>
-      <h1>Build a vivid <em>landscape.</em></h1>
-      <p>Edit your scene, then shape its atmosphere with the controls below.</p>
-    </div>
+    {{ back_link() }}
+    {{ page_header("Landscape generator", "Build a vivid <em>landscape.</em>", "Edit your scene, then shape its atmosphere with the controls below.") }}
 
     <form class="prompt-panel landscape-panel" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label for="landscapeDescription">Landscape description</label>
       <textarea class="form-control" id="landscapeDescription" name="description" rows="12" maxlength="4000" required placeholder="For example: A wide alpine valley with a winding river, distant snow-covered peaks, and wildflowers in the foreground...">{{ description }}</textarea>
 
@@ -32,17 +30,11 @@
       <div class="generated-result">
         <label for="generatedPrompt">Generated result</label>
         <textarea class="form-control" id="generatedPrompt" name="generated_prompt" rows="7" maxlength="5000" placeholder="Your generated landscape prompt will appear here...">{{ generated_prompt }}</textarea>
-        <div class="result-actions">
-          <span id="copyStatus" class="copy-status" role="status" aria-live="polite"></span>
-          <button class="btn btn-copy-prompt" id="copyPrompt" type="button">Copy to clipboard <span aria-hidden="true">⧉</span></button>
-        </div>
+        {{ copy_action("generatedPrompt") }}
       </div>
 
       <button class="btn btn-primary-custom justify-content-center landscape-submit" type="submit" name="action" value="update">Update landscape <span aria-hidden="true">→</span></button>
     </form>
-    <div class="landscape-footer-actions">
-      <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
-    </div>
   </div>
 </section>
 {% endblock %}
