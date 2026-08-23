@@ -28,6 +28,36 @@ LANDSCAPE_DROPDOWNS = [
     },
 ]
 
+STYLE_KEYWORDS = {
+    "photorealistic": "photorealistic, hyperrealistic, 8k, DSLR, sharp focus",
+    "digital_art": "digital art, artstation, trending, vibrant colours",
+    "oil_painting": "oil painting, impasto, textured canvas, classical",
+    "watercolor": "watercolour, soft edges, wet-on-wet, pastel tones",
+    "anime": "anime style, manga, cel shading, clean lines",
+    "concept_art": "concept art, cinematic, detailed environment, matte painting",
+    "pixel_art": "pixel art, 16-bit, retro game style",
+    "3d_render": "3D render, octane render, subsurface scattering, ray tracing",
+}
+
+LIGHTING_KEYWORDS = {
+    "golden_hour": "golden hour lighting, warm tones, long shadows",
+    "neon": "neon glow, cyberpunk lighting, colourful reflections",
+    "studio": "studio lighting, softbox, professional photography",
+    "dramatic": "dramatic lighting, chiaroscuro, deep shadows, high contrast",
+    "soft": "soft diffused lighting, overcast, gentle shadows",
+    "volumetric": "volumetric lighting, god rays, atmospheric haze",
+}
+
+PLATFORM_SUFFIX = {
+    "midjourney": "--ar {ratio} --v 6 --style raw",
+    "dalle": "",
+    "stable_diffusion": ", masterpiece, best quality",
+    "firefly": "",
+    "leonardo": ", ultra detailed, high quality",
+}
+
+
+
 
 def get_db_connection():
     database_path = Path(app.instance_path) / "prompts.db"
@@ -113,6 +143,47 @@ def landscape():
         selections=selections,
         generated_prompt=generated_prompt,
     )
+
+@app.route("/prompt_generator", methods=["GET", "POST"])
+def prompt_generator():
+    result = None
+    idea = platform = style = lighting = ratio = keywords = None
+    if request.method == "POST":
+        idea      = request.form.get("idea", "").strip()
+        platform  = request.form.get("platform", "midjourney")
+        style     = request.form.get("style", "")
+        lighting  = request.form.get("lighting", "")
+        ratio     = request.form.get("ratio", "1:1")
+        keywords  = request.form.get("keywords", "").strip()
+
+        parts = [idea]
+
+        if style and style in STYLE_KEYWORDS:
+            parts.append(STYLE_KEYWORDS[style])
+
+        if lighting and lighting in LIGHTING_KEYWORDS:
+            parts.append(LIGHTING_KEYWORDS[lighting])
+
+        if keywords:
+            parts.append(keywords)
+
+        prompt = ", ".join(p for p in parts if p)
+
+        suffix = PLATFORM_SUFFIX.get(platform, "")
+        if suffix:
+            prompt += " " + suffix.replace("{ratio}", ratio)
+
+        result = prompt
+
+    return render_template("prompt_generator.html",
+                           result=result, idea=idea, platform=platform,
+                           style=style, lighting=lighting, ratio=ratio,
+                           keywords=keywords)
+
+
+
+
+
 
 
 if __name__ == "__main__":
