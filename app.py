@@ -1,10 +1,16 @@
 import sqlite3
+import person_parameters as person_param
+from forms import CharacterForm
+from utils import process_character_form_data
 from pathlib import Path
 
 from flask import Flask, render_template, request
 
 
+# creates the flask instance
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '52jMEfBA3347dbefePSSiheXox3E7e'
+
 
 
 LANDSCAPE_DROPDOWNS = [
@@ -181,6 +187,18 @@ def prompt_generator():
                            keywords=keywords)
 
 
+@app.route("/character", methods=["GET", "POST"])
+def character():
+    form = CharacterForm()
+
+    if request.method == "POST":
+        prompt = process_character_form_data(request.form)
+
+        # print(prompt)
+        return render_template('character.html', form=form, prompt=prompt)
+
+    # Render the template without a result if the form is not submitted
+    return render_template('character.html', form=form)
 
 
 

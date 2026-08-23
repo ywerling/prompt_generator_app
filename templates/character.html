@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Generic Prompt Generator for Generative Artificial Intelligence{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="heading">Welcome to the Science Fiction and Fantasy Character Prompt Generator</h1>
+  <p class="description">Fill in the requested information and click generate. You can edit the prompt and send it to the clipboard to be used in other applications.</p>
+</div>
+
+    <form method="POST">
+  {{ form.hidden_tag() }}  <!-- CSRF protection tag -->
+
+        <div class="container">
+          <div class="row">
+            <div class="col-3">
+                {{ form.scene.label(class="form-label") }}
+                {{ form.scene(class="form-control", placeholder="scene") }}
+           </div>
+              <div class="col-3">
+                {{ form.gender.label(class="form-label") }}
+                {{ form.gender(class="form-control", placeholder="gender") }}
+           </div>
+          <div class="col-3">
+                {{ form.race.label(class="form-label") }}
+                {{ form.race(class="form-control", placeholder="race") }}
+           </div>
+           <div class="col-3">
+                {{ form.body_type.label(class="form-label") }}
+                {{ form.body_type(class="form-control", placeholder="body_type") }}
+           </div>
+          <div class="col-3">
+                {{ form.skin.label(class="form-label") }}
+                {{ form.skin(class="form-control", placeholder="skin") }}
+           </div>
+
+          </div>
+
+        <div class="row">
+          <div class="col-3">
+                {{ form.hair_color.label(class="form-label") }}
+                {{ form.hair_color(class="form-control", placeholder="hair_color") }}
+           </div>
+          <div class="col-3">
+                {{ form.hair_type.label(class="form-label") }}
+                {{ form.hair_type(class="form-control", placeholder="hair_type") }}
+           </div>
+            <div class="col-3">
+                {{ form.clothing_color.label(class="form-label") }}
+                {{ form.clothing_color(class="form-control", placeholder="clothing_color") }}
+           </div>
+                <div class="col-3">
+                {{ form.clothing_material.label(class="form-label") }}
+                {{ form.clothing_material(class="form-control", placeholder="clothing_material") }}
+           </div>
+            <div class="col-3">
+                {{ form.clothing_type.label(class="form-label") }}
+                {{ form.clothing_type(class="form-control", placeholder="clothing_type") }}
+           </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-3">
+            {{ form.body_pose.label(class="form-label") }}
+            {{ form.body_pose(class="form-control", placeholder="body_pose") }}
+          </div>
+          <div class="col-3">
+                {{ form.tool_action.label(class="form-label") }}
+                {{ form.tool_action(class="form-control", placeholder="tool_action") }}
+           </div>
+          <div class="col-3">
+                {{ form.tool.label(class="form-label") }}
+                {{ form.tool(class="form-control", placeholder="tool") }}
+           </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+                {{ form.activity.label(class="form-label") }}
+                {{ form.activity(class="form-control", placeholder="activity") }}
+           </div>
+           </div>
+           <div class="col-md-4">
+                {{ form.activity_detail.label(class="form-label") }}
+                {{ form.activity_detail(class="form-control", placeholder="activity_detail") }}
+           </div>
+       </div>
+
+        <div class="row">
+                 <div class="col-md-1">
+
+                </div>
+            <div class="col-md-6">
+                {{ form.background.label(class="form-label") }}
+                {{ form.background(class="form-control", placeholder="background") }}
+                <br><br>
+            </div>
+        </div>
+
+
+        </div>
+
+        <br>
+
+         <div class="container">
+            <div class="row">
+                <div class="col">
+                    <button type="submit">Generate Prompt</button><br>
+                </div>
+                <div class="col">
+                    <button type="button" onclick="randomizeParameters()" disabled="disabled">Randomize</button><br><br>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="container">
+{% if prompt %}
+    <label for="generatedPrompt"><strong>Generated Prompt:</strong></label><br>
+    <textarea id="generatedPrompt" rows="4" cols="150">{{ prompt }}</textarea><br><br>
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+{% endif %}
+    <br><br>
+    <a
+      class="btn btn-warning btn-lg"
+      href="{{ url_for('home') }}"
+      role="button"
+      >Back</a
+    >
+    </div>
+
+    <script>
+    function randomizeParameters() {}
+
+    function copyToClipboard() {
+        const promptText = document.getElementById("generatedPrompt").value;
+        navigator.clipboard.writeText(promptText).then(function() {
+            alert("Prompt copied to clipboard!");
+        }, function(err) {
+            alert("Failed to copy prompt. Please try again.");
+        });
+    }
+
+    </script>
+{% endblock %}
