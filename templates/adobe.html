@@ -10,15 +10,10 @@
 </div>
 
 
-    <a
-      class="btn btn-warning btn-lg"
-      href="{{ url_for('home') }}"
-      role="button"
-      >Back</a
-    >
+  <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
 
 
-    <form method="POST" action="{{ url_for('adobe.scrape') }}">
+    <form method="POST" action="{{ url_for('adobe') }}">
         <div class="mb-3 row">
             <label for="topic">Topic:</label>
             <input type="text" id="topic" name="topic" value="{{ topic }}"><br><br>
@@ -29,13 +24,11 @@
 
         <div class="row">
             <label for="images">List of image descriptions:</label>
-            {% if images %}
-                {% for image in images[3:-3] %}
-                    {% set text_to_write = image.get_attribute("alt") %}
-                    {% if text_to_write and text_to_write|length > 1 %}
-                        <p>{{ text_to_write }}</p>
-                    {% endif %}
-
+            {% if error %}
+                <p class="alert alert-warning" role="alert">{{ error }}</p>
+            {% elif images %}
+                {% for description in images %}
+                    <p>{{ description }}</p>
                 {% endfor %}
             {% else %}
                 <p>No descriptions available.</p>

@@ -6,7 +6,7 @@
 <div class="content">
   <h2 class="heading">Prompt Generator</h2>
   <p class="description">Describe your idea and we'll craft a detailed prompt for your chosen AI image tool.</p>
-
+    <a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
   <div class="tool-card w-100">
     <form method="POST" action="{{ url_for('prompt_generator') }}">
       <div class="row g-4">

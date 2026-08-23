@@ -4,7 +4,9 @@ from utils import process_character_form_data
 from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
+from urllib.parse import urlencode
 import time
 
 from flask import Flask, render_template, request
@@ -15,8 +17,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '52jMEfBA3347dbefePSSiheXox3E7e'
 
 # Define constants for Webscrapping feature
-ADOBE_STOCK_IMAGES_URL = "https://stock.adobe.com/"
-WEBSCRAPPER_SLEEP_INTERVAL = 1
+ADOBE_STOCK_SEARCH_URL = "https://stock.adobe.com/search"
+WEBSCRAPPER_TIMEOUT = 20
+
+
+class AdobeScrapingError(RuntimeError):
+    """Raised when Adobe does not make search results available to Selenium."""
 
 # Define constants for Landscape generator
 LANDSCAPE_DROPDOWNS = [
@@ -73,38 +79,76 @@ PLATFORM_SUFFIX = {
 def init_webdriver():
     # Setting up the Selenium WebDriver
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run headless Chrome for better performance
+    options.add_argument('--headless=new')  # Use Chrome's current headless implementation
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_experimental_option('excludeSwitches', ['enable-automation'])
     driver = webdriver.Chrome(options=options)
     return driver
 
 
 # Function to scrape Adobe Stock Images using Selenium
 def scrape_adobe_images(query):
-    # print(f"Query: {query}")
+    query = (query or "").strip()
+    if not query:
+        return []
+
     driver = init_webdriver()
     try:
-        driver.get(ADOBE_STOCK_IMAGES_URL)
-        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+        # Going directly to the results page avoids depending on Adobe's changing
+        # home-page search input (which no longer reliably has name="keyword").
+        search_url = f"{ADOBE_STOCK_SEARCH_URL}?{urlencode({'k': query})}"
+        driver.get(search_url)
 
-        # Find search box and enter search query
-        search_box = driver.find_element(By.NAME, "keyword")
-        search_box.clear()
-        search_box.send_keys(query)
-        search_box.send_keys(Keys.RETURN)
+        WebDriverWait(driver, WEBSCRAPPER_TIMEOUT).until(
+            lambda current_driver: current_driver.execute_script(
+                "return document.readyState"
+            ) == "complete"
+        )
 
-        # allow time for processing the return
-        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+        # Adobe has used both native images and ARIA-labelled image containers.
+        # Poll while scrolling because result cards are lazy-loaded.
+        result_selector = (
+            "img[alt]:not([alt='']), "
+            "[role='img'][aria-label]:not([aria-label='']), "
+            "a[href*='/images/'][aria-label]:not([aria-label=''])"
+        )
+        deadline = time.monotonic() + WEBSCRAPPER_TIMEOUT
+        images = []
+        while time.monotonic() < deadline:
+            images = driver.find_elements(By.CSS_SELECTOR, result_selector)
+            if images:
+                break
+            driver.execute_script("window.scrollBy(0, 800)")
+            time.sleep(0.5)
 
-        # get infomration about the images
-        images = driver.find_elements(By.XPATH, "//img[@alt]")
-        # for image in images:
-        #     print(f'{image.get_attribute("alt")}{image.get_attribute("name")}\n')
+        if not images:
+            page_title = driver.title or "untitled page"
+            raise AdobeScrapingError(
+                "Adobe did not provide image results to the automated browser "
+                f"(page: {page_title}). It may be showing a consent, region, "
+                "CAPTCHA, or bot-protection page."
+            )
 
-        return images
+        # Return plain strings: WebElement objects become invalid after quit().
+        descriptions = []
+        seen = set()
+        for image in images:
+            description = (
+                image.get_attribute("alt")
+                or image.get_attribute("aria-label")
+                or ""
+            ).strip()
+            if len(description) > 1 and description not in seen:
+                descriptions.append(description)
+                seen.add(description)
+            if len(descriptions) == 100:
+                break
+
+        return descriptions
 
     finally:
-        # driver.quit()
-        time.sleep(WEBSCRAPPER_SLEEP_INTERVAL)
+        driver.quit()
 
 # Function to establish a connection to the database
 def get_db_connection():
@@ -243,17 +287,23 @@ def character():
     return render_template('character.html', form=form)
 
 @app.route("/scrape", methods=["GET", "POST"])
-def scrape():
+def adobe():
     search_term = ""
     # print("scrape called")
     if request.method == "POST":
         # print("scrape post")
         search_term = request.form.get("topic")
-        images = scrape_adobe_images(search_term)
+        error = None
+        try:
+            images = scrape_adobe_images(search_term)
+        except (AdobeScrapingError, WebDriverException) as exc:
+            images = []
+            error = str(exc)
         # for image in images:
         #     print(f'{image.get_attribute("alt")}{image.get_attribute("name")}\n')
         return render_template('adobe.html',
                                images=images,
+                               error=error,
                                topic=search_term)
 
     return render_template('adobe.html',

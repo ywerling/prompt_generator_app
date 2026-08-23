@@ -7,6 +7,7 @@
   <h1 class="heading">Welcome to the Science Fiction and Fantasy Character Prompt Generator</h1>
   <p class="description">Fill in the requested information and click generate. You can edit the prompt and send it to the clipboard to be used in other applications.</p>
 </div>
+<a class="btn btn-back-home" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to home</a>
 
     <form method="POST">
   {{ form.hidden_tag() }}  <!-- CSRF protection tag -->
